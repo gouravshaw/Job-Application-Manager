@@ -1,0 +1,130 @@
+import { useState } from 'react';
+import { FaTrash, FaArchive, FaCheckCircle, FaTimes } from 'react-icons/fa';
+import { STATUS_OPTIONS } from '../types';
+import { applicationApi } from '../services/api';
+
+interface BulkActionsBarProps {
+  selectedIds: number[];
+  onClear: () => void;
+  onSuccess: () => void;
+}
+
+export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsBarProps) => {
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [processing, setProcessing] = useState(false);
+
+  if (selectedIds.length === 0) return null;
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Delete ${selectedIds.length} application(s)? This cannot be undone.`)) {
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      await applicationApi.bulkDelete(selectedIds);
+      alert(`Successfully deleted ${selectedIds.length} application(s)`);
+      onClear();
+      onSuccess();
+    } catch (error) {
+      console.error('Error deleting applications:', error);
+      alert('Failed to delete applications');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleBulkArchive = async () => {
+    setProcessing(true);
+    try {
+      await applicationApi.bulkArchive(selectedIds);
+      alert(`Successfully archived ${selectedIds.length} application(s)`);
+      onClear();
+      onSuccess();
+    } catch (error) {
+      console.error('Error archiving applications:', error);
+      alert('Failed to archive applications');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleBulkStatusUpdate = async (status: string) => {
+    setProcessing(true);
+    try {
+      await applicationApi.bulkUpdateStatus(selectedIds, status);
+      alert(`Successfully updated ${selectedIds.length} application(s) to "${status}"`);
+      setShowStatusMenu(false);
+      onClear();
+      onSuccess();
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white rounded-full shadow-2xl px-6 py-4 flex items-center gap-4 z-50 animate-slideUp">
+      <span className="font-semibold">{selectedIds.length} selected</span>
+      
+      <div className="flex gap-2 border-l border-blue-400 pl-4">
+        <div className="relative">
+          <button
+            onClick={() => setShowStatusMenu(!showStatusMenu)}
+            disabled={processing}
+            className="px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+            title="Update Status"
+          >
+            <FaCheckCircle />
+            Change Status
+          </button>
+          
+          {showStatusMenu && (
+            <div className="absolute bottom-full mb-2 left-0 bg-white rounded-md shadow-lg py-2 w-48 max-h-64 overflow-y-auto">
+              {STATUS_OPTIONS.map(status => (
+                <button
+                  key={status}
+                  onClick={() => handleBulkStatusUpdate(status)}
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={handleBulkArchive}
+          disabled={processing}
+          className="px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+          title="Archive Selected"
+        >
+          <FaArchive />
+          Archive
+        </button>
+
+        <button
+          onClick={handleBulkDelete}
+          disabled={processing}
+          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center gap-2"
+          title="Delete Selected"
+        >
+          <FaTrash />
+          Delete
+        </button>
+      </div>
+
+      <button
+        onClick={onClear}
+        className="ml-2 p-2 hover:bg-blue-700 rounded-full transition-colors"
+        title="Clear Selection"
+      >
+        <FaTimes />
+      </button>
+    </div>
+  );
+};
+
