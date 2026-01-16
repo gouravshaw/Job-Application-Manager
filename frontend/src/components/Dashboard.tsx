@@ -89,7 +89,7 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
         <button
           onClick={handleExportExcel}
           disabled={downloading || stats.total_applications === 0}
-          className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:shadow-lg transition-all disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+          className="flex items-center gap-2 btn-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FaDownload />
           {downloading ? 'Downloading...' : 'Export to Excel'}
@@ -98,73 +98,77 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
 
       {/* Main Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div 
-          className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-xl shadow-sm hover:shadow-lg cursor-pointer card-hover border border-blue-100 dark:border-blue-800/50"
+        <div
+          className="relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-xl border border-blue-100/50 dark:border-blue-800/30 bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-900/40 dark:to-indigo-900/40 backdrop-blur-md cursor-pointer group"
           onClick={() => onCardClick && onCardClick('all', '')}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between relative z-10">
             <div>
-              <p className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">Total Applications</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total_applications}</p>
+              <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1 tracking-wide uppercase opacity-80">Total Applications</p>
+              <p className="text-4xl font-extrabold text-gray-900 dark:text-white mt-2">{stats.total_applications}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+            <div className="p-3.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
               <FaBriefcase className="text-white text-xl" />
             </div>
           </div>
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
         </div>
 
-        <div 
-          className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-6 rounded-xl shadow-sm hover:shadow-lg cursor-pointer card-hover border border-indigo-100 dark:border-indigo-800/50"
+        <div
+          className="relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-xl border border-indigo-100/50 dark:border-indigo-800/30 bg-gradient-to-br from-indigo-50/80 to-purple-50/80 dark:from-indigo-900/40 dark:to-purple-900/40 backdrop-blur-md cursor-pointer group"
           onClick={() => onCardClick && onCardClick('status', 'Saved,To Apply')}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between relative z-10">
             <div>
-              <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 mb-2">Need to Apply</p>
-              <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{getSavedCount()}</p>
+              <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 mb-1 tracking-wide uppercase opacity-80">Need to Apply</p>
+              <p className="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-2">{getSavedCount()}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-md">
+            <div className="p-3.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300">
               <FaClock className="text-white text-xl" />
             </div>
           </div>
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
         </div>
 
-        <div 
-          className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 p-6 rounded-xl shadow-sm hover:shadow-lg cursor-pointer card-hover border border-cyan-100 dark:border-cyan-800/50"
+        <div
+          className="relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-xl border border-cyan-100/50 dark:border-cyan-800/30 bg-gradient-to-br from-cyan-50/80 to-blue-50/80 dark:from-cyan-900/40 dark:to-blue-900/40 backdrop-blur-md cursor-pointer group"
           onClick={() => onCardClick && onCardClick('applied', 'true')}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between relative z-10">
             <div>
-              <p className="text-sm font-medium text-cyan-600 dark:text-cyan-400 mb-2">Applied</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{getAppliedCount()}</p>
+              <p className="text-sm font-bold text-cyan-600 dark:text-cyan-400 mb-1 tracking-wide uppercase opacity-80">Applied</p>
+              <p className="text-4xl font-extrabold text-cyan-600 dark:text-blue-400 mt-2">{getAppliedCount()}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-md">
+            <div className="p-3.5 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg shadow-cyan-500/30 group-hover:scale-110 transition-transform duration-300">
               <FaCheckCircle className="text-white text-xl" />
             </div>
           </div>
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
         </div>
 
-        <div 
-          className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 p-6 rounded-xl shadow-sm hover:shadow-lg card-hover border border-emerald-100 dark:border-emerald-800/50"
+        <div
+          className="relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:transform hover:scale-[1.02] hover:shadow-xl border border-emerald-100/50 dark:border-emerald-800/30 bg-gradient-to-br from-emerald-50/80 to-green-50/80 dark:from-emerald-900/40 dark:to-green-900/40 backdrop-blur-md group"
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between relative z-10">
             <div>
-              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-2">Success Rate</p>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-1 tracking-wide uppercase opacity-80">Success Rate</p>
+              <p className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2">
                 {getAppliedCount() > 0
                   ? Math.round(((stats.by_status['Offer'] || 0) / getAppliedCount()) * 100)
                   : 0}
-                %
+                <span className="text-2xl ml-1">%</span>
               </p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-md">
+            <div className="p-3.5 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
               <FaCheckCircle className="text-white text-xl" />
             </div>
           </div>
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
         </div>
       </div>
 
       {/* Status Breakdown */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+      <div className="glass-card p-6 rounded-2xl">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg shadow-md">
             <FaChartPie className="text-lg text-white" />
@@ -173,8 +177,8 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Object.entries(stats.by_status).map(([status, count]) => (
-            <div 
-              key={status} 
+            <div
+              key={status}
               className={`p-5 rounded-xl ${getStatusColor(status)} cursor-pointer hover:scale-105 transition-transform shadow-sm hover:shadow-md`}
               onClick={() => onCardClick && onCardClick('status', status)}
             >
@@ -187,7 +191,7 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
 
       {/* Rejections by Stage */}
       {totalRejections > 0 && (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="glass-card p-6 rounded-2xl">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg shadow-md">
               <FaTimesCircle className="text-lg text-white" />
@@ -221,12 +225,12 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
 
       {/* Domain Breakdown */}
       {Object.keys(stats.by_domain).length > 0 && (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="glass-card p-6 rounded-2xl">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Applications by Domain</h3>
           <div className="space-y-4">
             {Object.entries(stats.by_domain).map(([domain, count]) => (
-              <div 
-                key={domain} 
+              <div
+                key={domain}
                 className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700/50 p-3 rounded-lg transition-colors group"
                 onClick={() => onCardClick && onCardClick('domain', domain)}
               >
@@ -248,12 +252,12 @@ export const Dashboard = ({ onCardClick }: DashboardProps) => {
 
       {/* Work Type Breakdown */}
       {Object.keys(stats.by_work_type).length > 0 && (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+        <div className="glass-card p-6 rounded-2xl">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Applications by Work Type</h3>
           <div className="flex gap-6 justify-around flex-wrap">
             {Object.entries(stats.by_work_type).map(([workType, count]) => (
-              <div 
-                key={workType} 
+              <div
+                key={workType}
                 className="text-center cursor-pointer hover:scale-110 transition-transform"
                 onClick={() => onCardClick && onCardClick('workType', workType)}
               >

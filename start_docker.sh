@@ -24,7 +24,7 @@ echo "Building and starting containers..."
 echo "This may take a few minutes on first run..."
 echo ""
 
-docker-compose up --build
+docker compose up --build
 
 echo ""
 echo "Application stopped."

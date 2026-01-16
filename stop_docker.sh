@@ -5,7 +5,7 @@ echo "Stopping Job Application Manager"
 echo "===================================="
 echo ""
 
-docker-compose down
+docker compose down
 
 echo ""
 echo "Application stopped successfully!"

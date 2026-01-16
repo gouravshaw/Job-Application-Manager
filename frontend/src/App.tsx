@@ -1,96 +1,89 @@
-import { useState } from 'react';
-import { FaBriefcase, FaChartBar, FaMoon, FaSun } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { ApplicationList } from './components/ApplicationList';
+import { Sidebar } from './components/Sidebar';
 import { useTheme } from './contexts/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 import './index.css';
 
-function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'applications'>('dashboard');
+function AppContent() {
+  // Initialize state from URL
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'applications'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    return (tab === 'applications' || tab === 'dashboard') ? tab : 'dashboard';
+  });
+
   const [initialFilter, setInitialFilter] = useState<{ type: string; value: string; timestamp?: number } | null>(null);
   const { isDark, toggleTheme } = useTheme();
 
+  // Sync state to URL and handle back button
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') !== activeTab) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('tab', activeTab);
+      window.history.pushState({}, '', newUrl);
+    }
+
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab === 'applications' || tab === 'dashboard') {
+        setActiveTab(tab);
+      } else {
+        setActiveTab('dashboard');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activeTab]);
+
   const handleDashboardClick = (filterType: string, filterValue: string) => {
-    // Add timestamp to force React to detect this as a new object
     setInitialFilter({ type: filterType, value: filterValue, timestamp: Date.now() });
     setActiveTab('applications');
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold">Job Application Manager</h1>
-              <p className="text-blue-100 mt-1">Track your job hunting journey</p>
+    <div className={`min-h-screen flex ${isDark ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isDark={isDark}
+        toggleTheme={toggleTheme}
+      />
+
+      {/* Main Content Area */}
+      <main className="flex-1 w-full p-4 lg:p-8 overflow-y-auto h-screen">
+        <div className="space-y-6">
+          {activeTab === 'dashboard' ? (
+            <div className="animate-slideUp">
+              <Dashboard onCardClick={handleDashboardClick} />
             </div>
-            <button
-              onClick={toggleTheme}
-              className="p-3 bg-blue-700 hover:bg-blue-600 rounded-full transition-colors"
-              title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-            >
-              {isDark ? <FaSun className="text-yellow-300" /> : <FaMoon />}
-            </button>
-          </div>
+          ) : (
+            <div className="animate-slideUp">
+              <ApplicationList initialFilter={initialFilter} />
+            </div>
+          )}
         </div>
-      </header>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white dark:bg-gray-800 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex gap-4">
-            <button
-              onClick={() => {
-                setActiveTab('dashboard');
-                setInitialFilter(null);
-              }}
-              className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-colors ${
-                activeTab === 'dashboard'
-                  ? 'border-blue-600 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
-              }`}
-            >
-              <FaChartBar />
-              Dashboard
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('applications');
-                setInitialFilter(null);
-              }}
-              className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-colors ${
-                activeTab === 'applications'
-                  ? 'border-blue-600 text-blue-600 dark:text-blue-400 font-semibold'
-                  : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
-              }`}
-            >
-              <FaBriefcase />
-              Applications
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {activeTab === 'dashboard' ? (
-          <Dashboard onCardClick={handleDashboardClick} />
-        ) : (
-          <ApplicationList initialFilter={initialFilter} />
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white mt-12">
-        <div className="container mx-auto px-4 py-6 text-center">
-          <p className="text-sm">
-            Job Application Manager © 2025
+        {/* Footer */}
+        <footer className="mt-12 py-6 text-center border-t border-gray-100 dark:border-slate-800">
+          <p className="text-sm text-gray-400 dark:text-gray-600">
+            Job Manager Pro © 2026
           </p>
-        </div>
-      </footer>
+        </footer>
+      </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

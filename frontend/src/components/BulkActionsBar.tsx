@@ -9,7 +9,10 @@ interface BulkActionsBarProps {
   onSuccess: () => void;
 }
 
+import { useToast } from '../context/ToastContext';
+
 export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsBarProps) => {
+  const { showToast } = useToast();
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [processing, setProcessing] = useState(false);
 
@@ -23,12 +26,12 @@ export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsB
     setProcessing(true);
     try {
       await applicationApi.bulkDelete(selectedIds);
-      alert(`Successfully deleted ${selectedIds.length} application(s)`);
+      showToast(`Successfully deleted ${selectedIds.length} application(s)`, 'success');
       onClear();
       onSuccess();
     } catch (error) {
       console.error('Error deleting applications:', error);
-      alert('Failed to delete applications');
+      showToast('Failed to delete applications', 'error');
     } finally {
       setProcessing(false);
     }
@@ -38,12 +41,12 @@ export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsB
     setProcessing(true);
     try {
       await applicationApi.bulkArchive(selectedIds);
-      alert(`Successfully archived ${selectedIds.length} application(s)`);
+      showToast(`Successfully archived ${selectedIds.length} application(s)`, 'success');
       onClear();
       onSuccess();
     } catch (error) {
       console.error('Error archiving applications:', error);
-      alert('Failed to archive applications');
+      showToast('Failed to archive applications', 'error');
     } finally {
       setProcessing(false);
     }
@@ -73,13 +76,13 @@ export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsB
     setProcessing(true);
     try {
       await applicationApi.bulkUpdateStatus(selectedIds, status, stage);
-      alert(`Successfully updated ${selectedIds.length} application(s) to "${status}"`);
+      showToast(`Successfully updated ${selectedIds.length} application(s) to "${status}"`, 'success');
       setShowStatusMenu(false);
       onClear();
       onSuccess();
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update status');
+      showToast('Failed to update status', 'error');
     } finally {
       setProcessing(false);
     }
@@ -88,7 +91,7 @@ export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsB
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white rounded-full shadow-2xl px-6 py-4 flex items-center gap-4 z-50 animate-slideUp">
       <span className="font-semibold">{selectedIds.length} selected</span>
-      
+
       <div className="flex gap-2 border-l border-blue-400 pl-4">
         <div className="relative">
           <button
@@ -100,7 +103,7 @@ export const BulkActionsBar = ({ selectedIds, onClear, onSuccess }: BulkActionsB
             <FaCheckCircle />
             Change Status
           </button>
-          
+
           {showStatusMenu && (
             <div className="absolute bottom-full mb-2 left-0 bg-white rounded-md shadow-lg py-2 w-48 max-h-64 overflow-y-auto">
               {STATUS_OPTIONS.map(status => (
